@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header>
+      <div id="username-display"></div>
+    </header>
+
+    <!-- TELA DE LOGIN/CADASTRO -->
+    <div id="auth-section" class="auth-container">
+      <div class="auth-box">
+        <h2>Entrar</h2>
+        <form id="login-form">
+          <div class="input-group">
+            <label for="login-username">Usuário</label>
+            <input type="text" id="login-username" placeholder="Digite seu usuário" required>
+          </div>
+          <div class="input-group">
+            <label for="login-password">Senha</label>
+            <input type="password" id="login-password" placeholder="Digite sua senha" required>
+          </div>
+          <button type="submit" class="btn-primary">Entrar</button>
+          <div id="login-message" class="message-area"></div>
+        </form>
+
+        <div class="divider">ou</div>
+
+        <h2>Criar Conta</h2>
+        <form id="register-form">
+          <div class="input-group">
+            <label for="register-username">Usuário</label>
+            <input type="text" id="register-username" placeholder="Escolha um usuário" required>
+          </div>
+          <div class="input-group">
+            <label for="register-password">Senha</label>
+            <input type="password" id="register-password" placeholder="Crie uma senha segura" required>
+          </div>
+          <button type="submit" class="btn-secondary">Cadastrar</button>
+          <div id="register-message" class="message-area"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TELA DO APP (após login) -->
+    <div id="app-section" style="display: none;">
+      <h1>Minha Lista de Tarefas</h1>
+      <form id="task-form">
+        <input type="text" id="task-input" placeholder="Adicione uma nova tarefa" required>
+        <button type="submit">Adicionar</button>
+      </form>
+      <div id="message"></div>
+      <ul id="task-list"></ul>
+      <button onclick="logout()">Sair</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
