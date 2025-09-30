@@ -133,6 +133,13 @@ function logout() {
   authSection.style.display = 'flex';
   appSection.style.display = 'none';
   usernameDisplay.textContent = '';
+  
+  // Esconder o menu de admin ao sair
+  const adminNav = document.getElementById('admin-nav');
+  if (adminNav) {
+    adminNav.style.display = 'none';
+  }
+  
   taskList.innerHTML = '';
 }
 

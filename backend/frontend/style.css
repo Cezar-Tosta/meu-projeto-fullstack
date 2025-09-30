@@ -352,3 +352,156 @@ header {
   border: 1px solid #ccffcc;
   color: #5cb85c;
 }
+
+/* ==================== MENU SUPERIOR ==================== */
+
+header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 20px;
+  background-color: #007BFF;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#username-display {
+  font-size: 16px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+
+#admin-nav {
+  display: none;
+}
+
+#admin-nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-left: 8px;
+  font-size: 14px;
+}
+
+#admin-nav a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+#admin-nav a:active {
+  transform: translateY(0);
+}
+
+/* ==================== PÁGINA DE ADMIN ==================== */
+
+.admin-container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 28px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.admin-container h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 24px;
+  font-size: 28px;
+}
+
+.requests-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.requests-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 22px;
+}
+
+#requests-count {
+  background-color: #007BFF;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.request-item {
+  background-color: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.request-item:hover {
+  background-color: #f5f5f5;
+}
+
+.request-info {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.request-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.request-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.request-actions button.approve {
+  background-color: #28a745;
+  color: white;
+}
+
+.request-actions button.approve:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+.request-actions button.reject {
+  background-color: #dc3545;
+  color: white;
+}
+
+.request-actions button.reject:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.request-actions button:active {
+  transform: translateY(0);
+}
+
+/* Mensagem quando não há solicitações */
+.no-requests {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 40px 0;
+}

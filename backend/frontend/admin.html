@@ -7,8 +7,23 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Painel de Administração</h1>
-  <div id="requests"></div>
+  <header>
+    <div id="username-display"></div>
+    <nav id="admin-nav" style="display: none;">
+      <a href="admin.html">Administrar Cadastros</a>
+    </nav>
+  </header>
+
+  <main class="admin-container">
+    <h1>Painel de Administração</h1>
+    <div id="requests-container">
+      <div class="requests-header">
+        <h2>Solicitações de Cadastro</h2>
+        <span id="requests-count">Carregando...</span>
+      </div>
+      <div id="requests"></div>
+    </div>
+  </main>
 
   <script src="admin.js"></script>
 </body>
