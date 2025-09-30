@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg'); // Novo driver
+const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 3000;
 
 // Configuração do banco de dados PostgreSQL
 const dbConfig = {
-  connectionString: process.env.DATABASE_URL, // URL do PostgreSQL do Render
-  ssl: { rejectUnauthorized: false } // Necessário para Render
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 };
 
 const pool = new Pool(dbConfig);
