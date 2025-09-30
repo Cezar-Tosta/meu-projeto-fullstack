@@ -8,7 +8,7 @@ const usernameDisplay = document.getElementById('username-display');
 const loginMessage = document.getElementById('login-message');
 const registerMessage = document.getElementById('register-message');
 
-const API_BASE = 'https://meu-projeto-fullstack.onrender.com'
+const API_BASE = 'https://meu-projeto-fullstack.onrender.com';
 
 // Função para exibir mensagem em uma área específica
 function showMessage(element, text, isError = false) {
