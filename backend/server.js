@@ -153,6 +153,11 @@ app.delete('/tasks/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// Adicione esta rota antes de qualquer outra
+app.get('/test', (req, res) => {
+  res.json({ message: 'Servidor está funcionando!' });
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
