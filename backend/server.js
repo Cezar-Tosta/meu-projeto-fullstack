@@ -141,6 +141,7 @@ app.patch('/tasks/:id/undone', authenticateToken, async (req, res) => {
   }
 });
 
+
 // Rota para remover tarefa
 app.delete('/tasks/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
@@ -152,10 +153,18 @@ app.delete('/tasks/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Qualquer rota que não seja da API serve o index.html
-app.get('*', (req, res) => {
+// ❌ REMOVA ou COMENTE esta rota curinga que pode estar causando o problema
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'frontend/index.html'));
+// });
+
+// ✅ Substitua por uma rota explícita para servir o index.html
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend/index.html'));
 });
+
+// Servir outros arquivos estáticos do frontend
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Teste de conexão com o banco de dados
 async function testConnection() {
