@@ -16,12 +16,29 @@
 
   <main class="admin-container">
     <h1>Painel de Administração</h1>
+
+    <!-- Botões de navegação -->
+    <div class="admin-actions">
+      <a href="index.html" class="btn-secondary">Ver Tarefas</a>
+      <button onclick="logout()" class="btn-logout">Sair</button>
+    </div>
+
+    <!-- Solicitações Pendentes -->
     <div id="requests-container">
       <div class="requests-header">
         <h2>Solicitações de Cadastro</h2>
         <span id="requests-count">Carregando...</span>
       </div>
       <div id="requests"></div>
+    </div>
+
+    <!-- Usuários Aprovados -->
+    <div id="approved-users-container">
+      <div class="requests-header">
+        <h2>Usuários Aprovados</h2>
+        <span id="approved-count">Carregando...</span>
+      </div>
+      <div id="approved-users"></div>
     </div>
   </main>
 

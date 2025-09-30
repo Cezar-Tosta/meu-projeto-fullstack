@@ -224,6 +224,29 @@ async function testConnection() {
   }
 }
 
+// Rota para listar usuários aprovados (somente admin)
+app.get('/admin/approved-users', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, username FROM users WHERE approved = TRUE');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Rota para excluir um usuário (somente admin)
+app.delete('/admin/users/:id', authenticateToken, isAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Exclui o usuário e suas tarefas automaticamente graças ao ON DELETE CASCADE
+    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    res.json({ message: 'Usuário excluído com sucesso!' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 testConnection().then(() => {
   app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);

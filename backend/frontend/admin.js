@@ -1,8 +1,10 @@
 const token = localStorage.getItem('token');
 const requestsDiv = document.getElementById('requests');
 const requestsCount = document.getElementById('requests-count');
+const approvedUsersDiv = document.getElementById('approved-users');
+const approvedCount = document.getElementById('approved-count');
 
-// Função para carregar solicitações
+// Função para carregar solicitações pendentes
 async function loadRequests() {
   try {
     const response = await fetch('https://meu-projeto-fullstack.onrender.com/admin/requests', {
@@ -44,6 +46,48 @@ async function loadRequests() {
   }
 }
 
+// Função para carregar usuários aprovados
+async function loadApprovedUsers() {
+  try {
+    const response = await fetch('https://meu-projeto-fullstack.onrender.com/admin/approved-users', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao carregar usuários aprovados');
+    }
+
+    const users = await response.json();
+    approvedUsersDiv.innerHTML = '';
+
+    if (users.length === 0) {
+      approvedUsersDiv.innerHTML = '<div class="no-approved-users">Nenhum usuário aprovado.</div>';
+      approvedCount.textContent = '0';
+      return;
+    }
+
+    approvedCount.textContent = users.length;
+
+    users.forEach(user => {
+      const div = document.createElement('div');
+      div.className = 'approved-user-item';
+      div.innerHTML = `
+        <div class="approved-user-info">Usuário: ${user.username}</div>
+        <div class="approved-user-actions">
+          <button class="view-tasks" onclick="viewUserTasks(${user.id})">Ver Tarefas</button>
+          <button class="delete-user" onclick="deleteUser(${user.id}, this)">Excluir</button>
+        </div>
+      `;
+      approvedUsersDiv.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
+    approvedUsersDiv.innerHTML = '<div class="no-approved-users">Erro ao carregar usuários aprovados.</div>';
+  }
+}
+
 // Função para aprovar solicitação
 async function approve(id, button) {
   button.disabled = true;
@@ -60,7 +104,8 @@ async function approve(id, button) {
     });
 
     if (response.ok) {
-      loadRequests(); // Atualiza a lista
+      loadRequests(); // Atualiza a lista de solicitações
+      loadApprovedUsers(); // Atualiza a lista de aprovados
     } else {
       throw new Error('Erro ao aprovar');
     }
@@ -87,7 +132,7 @@ async function reject(id, button) {
     });
 
     if (response.ok) {
-      loadRequests(); // Atualiza a lista
+      loadRequests(); // Atualiza a lista de solicitações
     } else {
       throw new Error('Erro ao recusar');
     }
@@ -96,6 +141,43 @@ async function reject(id, button) {
     button.disabled = false;
     button.textContent = 'Recusar';
   }
+}
+
+// Função para excluir um usuário
+async function deleteUser(id, button) {
+  if (!confirm('Tem certeza que deseja excluir este usuário e todas as suas tarefas?')) {
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Excluindo...';
+
+  try {
+    const response = await fetch(`https://meu-projeto-fullstack.onrender.com/admin/users/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.ok) {
+      loadApprovedUsers(); // Atualiza a lista de aprovados
+    } else {
+      throw new Error('Erro ao excluir usuário');
+    }
+  } catch (err) {
+    console.error(err);
+    button.disabled = false;
+    button.textContent = 'Excluir';
+  }
+}
+
+// Função para ver tarefas de um usuário
+function viewUserTasks(userId) {
+  // Aqui você pode abrir uma nova janela/página ou mostrar em um modal
+  alert(`Função de ver tarefas do usuário ID: ${userId} em breve.`);
+  // Exemplo de redirecionamento para uma página de tarefas do usuário (ainda não implementada)
+  // window.location.href = `user-tasks.html?userId=${userId}`;
 }
 
 // Função para carregar o nome do usuário (copiado do script.js)
@@ -141,3 +223,4 @@ function showUsername() {
 showUsername();
 
 loadRequests();
+loadApprovedUsers();

@@ -505,3 +505,124 @@ header {
   font-style: italic;
   padding: 40px 0;
 }
+
+/* ==================== BOTÕES NA PÁGINA DE ADMIN ==================== */
+
+.admin-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.admin-actions a,
+.admin-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.admin-actions a {
+  background-color: #6c757d;
+  color: white;
+}
+
+.admin-actions a:hover {
+  background-color: #545b62;
+  transform: translateY(-1px);
+}
+
+.admin-actions button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.admin-actions button:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.admin-actions button:active {
+  transform: translateY(0);
+}
+
+/* ==================== USUÁRIOS APROVADOS ==================== */
+
+#approved-users-container {
+  margin-top: 40px;
+}
+
+.approved-user-item {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.approved-user-item:hover {
+  background-color: #e9ecef;
+}
+
+.approved-user-info {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+.approved-user-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.approved-user-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.approved-user-actions button.view-tasks {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.approved-user-actions button.view-tasks:hover {
+  background-color: #138496;
+  transform: translateY(-1px);
+}
+
+.approved-user-actions button.delete-user {
+  background-color: #dc3545;
+  color: white;
+}
+
+.approved-user-actions button.delete-user:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.approved-user-actions button:active {
+  transform: translateY(0);
+}
+
+/* Mensagem quando não há usuários aprovados */
+.no-approved-users {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 40px 0;
+}
