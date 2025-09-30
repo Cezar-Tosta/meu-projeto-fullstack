@@ -174,10 +174,7 @@ async function deleteUser(id, button) {
 
 // Função para ver tarefas de um usuário
 function viewUserTasks(userId) {
-  // Aqui você pode abrir uma nova janela/página ou mostrar em um modal
-  alert(`Função de ver tarefas do usuário ID: ${userId} em breve.`);
-  // Exemplo de redirecionamento para uma página de tarefas do usuário (ainda não implementada)
-  // window.location.href = `user-tasks.html?userId=${userId}`;
+  window.location.href = `user-tasks.html?userId=${userId}`;
 }
 
 // Função para carregar o nome do usuário (copiado do script.js)
