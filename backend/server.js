@@ -1,36 +1,22 @@
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2/promise');
+const { Pool } = require('pg'); // Novo driver
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuração da conexão com o banco de dados
+// Configuração do banco de dados PostgreSQL
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'taskmanager'
+  connectionString: process.env.DATABASE_URL, // URL do PostgreSQL do Render
+  ssl: { rejectUnauthorized: false } // Necessário para Render
 };
 
-app.use(cors({
-    origin: 'https://meu-projeto-fullstack.vercel.app/', // ou o domínio do seu front-end
-  }));
+const pool = new Pool(dbConfig);
+
+app.use(cors());
 app.use(express.json());
-
-let connection;
-
-async function connectToDatabase() {
-  try {
-    connection = await mysql.createConnection(dbConfig);
-    console.log('Conectado ao banco de dados MySQL');
-  } catch (err) {
-    console.error('Erro ao conectar ao banco de dados:', err);
-    process.exit(1);
-  }
-}
 
 // Middleware para verificar token
 function authenticateToken(req, res, next) {
@@ -54,14 +40,13 @@ app.post('/register', async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    const [result] = await connection.execute(
-      'INSERT INTO users (username, password) VALUES (?, ?)',
+    const result = await pool.query(
+      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id',
       [username, hashedPassword]
     );
     res.status(201).json({ message: 'Usuário criado com sucesso!' });
   } catch (err) {
-    // Verifica se o erro é por conta de username duplicado
-    if (err.code === 'ER_DUP_ENTRY') {
+    if (err.code === '23505') { // Código de erro para chave duplicada no PostgreSQL
       res.status(400).json({ error: 'Usuário já existe' });
     } else {
       res.status(500).json({ error: 'Erro interno no servidor' });
@@ -74,23 +59,19 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const [rows] = await connection.execute(
-      'SELECT * FROM users WHERE username = ?',
-      [username]
-    );
+    const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
 
-    if (rows.length === 0) {
+    if (result.rows.length === 0) {
       return res.status(400).json({ error: 'Usuário ou senha incorretos' });
     }
 
-    const user = rows[0];
+    const user = result.rows[0];
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(400).json({ error: 'Usuário ou senha incorretos' });
     }
 
-    // Incluímos o username no token JWT
     const token = jwt.sign({ id: user.id, username: user.username }, 'secret_key', { expiresIn: '1h' });
     res.json({ token });
   } catch (err) {
@@ -101,11 +82,8 @@ app.post('/login', async (req, res) => {
 // Rota para listar tarefas do usuário logado
 app.get('/tasks', authenticateToken, async (req, res) => {
   try {
-    const [rows] = await connection.execute(
-      'SELECT * FROM tasks WHERE user_id = ?',
-      [req.user.id]
-    );
-    res.json(rows);
+    const result = await pool.query('SELECT * FROM tasks WHERE user_id = $1', [req.user.id]);
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -115,16 +93,11 @@ app.get('/tasks', authenticateToken, async (req, res) => {
 app.post('/tasks', authenticateToken, async (req, res) => {
   const { title } = req.body;
   try {
-    const [result] = await connection.execute(
-      'INSERT INTO tasks (title, user_id) VALUES (?, ?)',
+    const result = await pool.query(
+      'INSERT INTO tasks (title, user_id) VALUES ($1, $2) RETURNING *',
       [title, req.user.id]
     );
-    res.status(201).json({
-      id: result.insertId,
-      title,
-      done: false,
-      user_id: req.user.id
-    });
+    res.status(201).json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -135,10 +108,7 @@ app.put('/tasks/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
   try {
-    await connection.execute(
-      'UPDATE tasks SET title = ? WHERE id = ? AND user_id = ?',
-      [title, id, req.user.id]
-    );
+    await pool.query('UPDATE tasks SET title = $1 WHERE id = $2 AND user_id = $3', [title, id, req.user.id]);
     res.status(200).json({ message: 'Tarefa atualizada com sucesso!' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -149,10 +119,7 @@ app.put('/tasks/:id', authenticateToken, async (req, res) => {
 app.patch('/tasks/:id/done', authenticateToken, async (req, res) => {
   const { id } = req.params;
   try {
-    await connection.execute(
-      'UPDATE tasks SET done = TRUE WHERE id = ? AND user_id = ?',
-      [id, req.user.id]
-    );
+    await pool.query('UPDATE tasks SET done = TRUE WHERE id = $1 AND user_id = $2', [id, req.user.id]);
     res.status(200).json({ message: 'Tarefa marcada como concluída!' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -163,10 +130,7 @@ app.patch('/tasks/:id/done', authenticateToken, async (req, res) => {
 app.patch('/tasks/:id/undone', authenticateToken, async (req, res) => {
   const { id } = req.params;
   try {
-    await connection.execute(
-      'UPDATE tasks SET done = FALSE WHERE id = ? AND user_id = ?',
-      [id, req.user.id]
-    );
+    await pool.query('UPDATE tasks SET done = FALSE WHERE id = $1 AND user_id = $2', [id, req.user.id]);
     res.status(200).json({ message: 'Tarefa marcada como não concluída!' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -177,18 +141,13 @@ app.patch('/tasks/:id/undone', authenticateToken, async (req, res) => {
 app.delete('/tasks/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   try {
-    await connection.execute(
-      'DELETE FROM tasks WHERE id = ? AND user_id = ?',
-      [id, req.user.id]
-    );
+    await pool.query('DELETE FROM tasks WHERE id = $1 AND user_id = $2', [id, req.user.id]);
     res.status(200).json({ message: 'Tarefa removida com sucesso!' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-connectToDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
