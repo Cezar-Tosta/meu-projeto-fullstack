@@ -44,13 +44,14 @@ app.post('/register', async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
+    // Insere o usuário com approved = false
     const result = await pool.query(
-      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id',
+      'INSERT INTO users (username, password, approved) VALUES ($1, $2, FALSE) RETURNING id',
       [username, hashedPassword]
     );
-    res.status(201).json({ message: 'Usuário criado com sucesso!' });
+    res.status(201).json({ message: 'Solicitação de cadastro enviada. Aguarde aprovação.' });
   } catch (err) {
-    if (err.code === '23505') {
+    if (err.code === '23505') { // Código de erro para chave duplicada no PostgreSQL
       res.status(400).json({ error: 'Usuário já existe' });
     } else {
       res.status(500).json({ error: 'Erro interno no servidor' });
@@ -70,6 +71,12 @@ app.post('/login', async (req, res) => {
     }
 
     const user = result.rows[0];
+
+    // Verifica se o usuário está aprovado
+    if (!user.approved) {
+      return res.status(403).json({ error: 'Conta aguardando aprovação do administrador' });
+    }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
@@ -80,6 +87,45 @@ app.post('/login', async (req, res) => {
     res.json({ token });
   } catch (err) {
     res.status(500).json({ error: 'Erro interno no servidor' });
+  }
+});
+
+// Middleware para verificar se o usuário é admin
+function isAdmin(req, res, next) {
+  if (req.user.is_admin) {
+    next();
+  } else {
+    res.status(403).json({ error: 'Acesso negado. Apenas administradores.' });
+  }
+}
+
+// Rota para listar solicitações de cadastro (usuários não aprovados)
+app.get('/admin/requests', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, username FROM users WHERE approved = FALSE');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Rota para aprovar ou recusar solicitação
+app.patch('/admin/approve/:id', authenticateToken, isAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { action } = req.body; // 'approve' ou 'reject'
+
+  try {
+    if (action === 'approve') {
+      await pool.query('UPDATE users SET approved = TRUE WHERE id = $1', [id]);
+      res.json({ message: 'Usuário aprovado com sucesso!' });
+    } else if (action === 'reject') {
+      await pool.query('DELETE FROM users WHERE id = $1', [id]);
+      res.json({ message: 'Solicitação recusada e usuário excluído.' });
+    } else {
+      res.status(400).json({ error: 'Ação inválida. Use "approve" ou "reject".' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
