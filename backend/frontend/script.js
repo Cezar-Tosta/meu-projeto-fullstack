@@ -38,11 +38,27 @@ function getUsernameFromToken() {
   }
 }
 
-// Função para mostrar o nome do usuário logado
+// Função para mostrar o nome do usuário logado e verificar se é admin
 function showUsername() {
-  const username = getUsernameFromToken();
-  if (username) {
+  const token = getToken();
+  if (!token) return;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const username = payload.username || 'Usuário';
+    const isAdmin = payload.is_admin || false;
+
     usernameDisplay.textContent = `Olá, ${username}`;
+
+    // Mostra o menu de admin se for admin
+    const adminNav = document.getElementById('admin-nav');
+    if (isAdmin) {
+      adminNav.style.display = 'block';
+    } else {
+      adminNav.style.display = 'none';
+    }
+  } catch (e) {
+    console.error('Erro ao decodificar o token:', e);
   }
 }
 

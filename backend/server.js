@@ -83,7 +83,8 @@ app.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Usuário ou senha incorretos' });
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username }, 'secret_key', { expiresIn: '1h' });
+    // Inclui is_admin no token
+    const token = jwt.sign({ id: user.id, username: user.username, is_admin: user.is_admin }, 'secret_key', { expiresIn: '1h' });
     res.json({ token });
   } catch (err) {
     res.status(500).json({ error: 'Erro interno no servidor' });
