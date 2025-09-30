@@ -3,6 +3,7 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,12 +16,10 @@ const dbConfig = {
 
 const pool = new Pool(dbConfig);
 
-app.use(
-  cors({
-    origin: 'https://meu-projeto-fullstack.vercel.app/', // Substitua pelo seu domínio real
-    credentials: true // Importante para enviar cookies/token
-  })
-);
+// Middleware para servir arquivos estáticos do front-end
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+// Middleware para parsear JSON
 app.use(express.json());
 
 // Middleware para verificar token
@@ -51,7 +50,7 @@ app.post('/register', async (req, res) => {
     );
     res.status(201).json({ message: 'Usuário criado com sucesso!' });
   } catch (err) {
-    if (err.code === '23505') { // Código de erro para chave duplicada no PostgreSQL
+    if (err.code === '23505') {
       res.status(400).json({ error: 'Usuário já existe' });
     } else {
       res.status(500).json({ error: 'Erro interno no servidor' });
@@ -153,11 +152,24 @@ app.delete('/tasks/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Adicione esta rota antes de qualquer outra
-app.get('/test', (req, res) => {
-  res.json({ message: 'Servidor está funcionando!' });
+// Qualquer rota que não seja da API serve o index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+// Teste de conexão com o banco de dados
+async function testConnection() {
+  try {
+    await pool.query('SELECT NOW()');
+    console.log('✅ Conexão com o banco de dados bem-sucedida!');
+  } catch (err) {
+    console.error('❌ Erro ao conectar ao banco de dados:', err.message);
+    process.exit(1);
+  }
+}
+
+testConnection().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+  });
 });
