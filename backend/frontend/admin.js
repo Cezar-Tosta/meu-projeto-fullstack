@@ -220,6 +220,12 @@ function showUsername() {
   }
 }
 
+// Função para sair
+function logout() {
+  localStorage.removeItem('token');
+  window.location.href = 'index.html'; // Redireciona para a tela de login
+}
+
 showUsername();
 
 loadRequests();
