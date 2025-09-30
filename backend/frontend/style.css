@@ -626,3 +626,132 @@ header {
   font-style: italic;
   padding: 40px 0;
 }
+
+/* ==================== PÁGINA DE TAREFAS DO USUÁRIO ==================== */
+
+.user-tasks-container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 28px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.user-tasks-container h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 24px;
+  font-size: 28px;
+}
+
+#user-info {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+#user-name {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.tasks-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 20px;
+}
+
+#tasks-count {
+  background-color: #007BFF;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#task-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+#task-list li {
+  padding: 14px;
+  background-color: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+#task-list li:hover {
+  background-color: #f5f5f5;
+}
+
+#task-list li span.done {
+  text-decoration: line-through;
+  color: #888;
+  font-style: italic;
+}
+
+.task-info {
+  flex: 1;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.task-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.task-actions button:first-child {
+  background-color: #5cb85c;
+  color: white;
+}
+
+.task-actions button:first-child:hover {
+  background-color: #4cae4c;
+}
+
+.task-actions button:last-child {
+  background-color: #d9534f;
+  color: white;
+}
+
+.task-actions button:last-child:hover {
+  background-color: #c9302c;
+}
+
+.loading {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+.no-tasks {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 40px 0;
+}

@@ -247,6 +247,58 @@ app.delete('/admin/users/:id', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
+// Rota para obter informações de um usuário (somente admin)
+app.get('/admin/user/:id', authenticateToken, isAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('SELECT username FROM users WHERE id = $1', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Rota para obter tarefas de um usuário específico (somente admin)
+app.get('/admin/user/:id/tasks', authenticateToken, isAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM tasks WHERE user_id = $1 ORDER BY id', [id]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Rota para marcar/desfazer tarefa de qualquer usuário (somente admin)
+app.patch('/admin/task/:id/:action', authenticateToken, isAdmin, async (req, res) => {
+  const { id } = req.params;
+  const action = req.params.action === 'done' ? true : false;
+
+  try {
+    await pool.query('UPDATE tasks SET done = $1 WHERE id = $2', [action, id]);
+    res.json({ message: `Tarefa ${action ? 'concluída' : 'desfeita'} com sucesso!` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Rota para excluir uma tarefa de qualquer usuário (somente admin)
+app.delete('/admin/task/:id', authenticateToken, isAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await pool.query('DELETE FROM tasks WHERE id = $1', [id]);
+    res.json({ message: 'Tarefa excluída com sucesso!' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 testConnection().then(() => {
   app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);

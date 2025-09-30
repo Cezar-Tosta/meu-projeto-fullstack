@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarefas do Usuário</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div id="username-display"></div>
+    <nav id="admin-nav" style="display: none;">
+      <a href="admin.html">Administrar Cadastros</a>
+    </nav>
+  </header>
+
+  <main class="user-tasks-container">
+    <h1>Tarefas do Usuário</h1>
+    <div id="user-info">
+      <h2 id="user-name">Carregando...</h2>
+    </div>
+    <div id="tasks-container">
+      <div class="tasks-header">
+        <h3>Tarefas</h3>
+        <span id="tasks-count">Carregando...</span>
+      </div>
+      <ul id="task-list">
+        <li class="loading">Carregando tarefas...</li>
+      </ul>
+    </div>
+    <div class="admin-actions">
+      <a href="admin.html" class="btn-secondary">Voltar ao Painel</a>
+    </div>
+  </main>
+
+  <script src="user-tasks.js"></script>
+</body>
+</html>
