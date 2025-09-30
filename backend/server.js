@@ -17,8 +17,8 @@ const pool = new Pool(dbConfig);
 
 app.use(
   cors({
-    origin: 'https://meu-projeto-fullstack.vercel.app/', // Substitua pelo seu domínio do Vercel
-    credentials: true
+    origin: 'https://meu-projeto-fullstack.vercel.app/', // Substitua pelo seu domínio real
+    credentials: true // Importante para enviar cookies/token
   })
 );
 app.use(express.json());
